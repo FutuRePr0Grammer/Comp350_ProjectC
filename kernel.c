@@ -188,12 +188,33 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 
 	//will store the directory once it is loaded via readSector
 	char directory[512];
+	//iterator for for loop to find the file name in the directory
+	int fileentry = 0;
 
 	//load the directory sector into the character array directory[]
 	readSector(directory, 2);
 	
 	//debugging statement
 	//printString(directory);
+
+	//loop to find the file name
+	for(fileentry; fileentry <= 512; fileentry += 32)
+	{
+		printChar('a');
+		if(filename[0] != directory[fileentry + 0])
+			continue;
+		
+	}	
+
+/*	while(fileentry <= 512)
+	{
+		printChar('a');
+		if(filename[0] != directory[fileentry + 0])
+			continue;
+
+		fileentry += 32;
+	}
+*/
 }
 
 
