@@ -201,7 +201,36 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 	for(fileentry; fileentry <= 512; fileentry += 32)
 	{
 		printChar('a');
-		if(filename[0] != directory[fileentry + 0])
+		/*if(filename[0] != directory[fileentry + 0])
+			continue;*/
+		if(filename[0] == directory[fileentry + 0])
+		{
+			if(filename[1] == directory[fileentry + 1])
+			{
+				if(filename[2] == directory[fileentry + 2])
+				{
+					if(filename[3] == directory[fileentry + 3])
+					{
+						if(filename[4] == directory[fileentry + 4])
+						{
+							if(filename[5] == directory[fileentry + 5])
+								printString("Found file!");
+								*sectorsRead = 1;
+								break;
+						}
+						else
+							continue;
+					}
+					else
+						continue;
+				}
+				else
+					continue;
+			}
+			else
+				continue;
+		}
+		else
 			continue;
 		
 	}	
