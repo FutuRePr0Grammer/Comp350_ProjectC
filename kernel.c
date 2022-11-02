@@ -6,6 +6,7 @@ void printString(char*);
 void printChar(char c);
 void readString(char*);
 void readSector(char* buffer, int sector);
+void readFile(char* filename);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 
 //hello Joao!
@@ -171,6 +172,14 @@ void readSector(char* buffer, int sector)
 	//interrupt(0x13, AX, CX, DX, buffer);
 
 }
+
+//function to read a file and to load it, sector by sector, to buffer array
+void readFile(char* filename)
+{
+
+	//work here
+}
+
 
 //makes interrupt 21 based on function in kernel.asm. Stores our code in the interrupt vector table at the base of memory
 //when interrupt 21 happens, goes to the table in memory, executes our code
