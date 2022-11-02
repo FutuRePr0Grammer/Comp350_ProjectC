@@ -6,7 +6,7 @@ void printString(char*);
 void printChar(char c);
 void readString(char*);
 void readSector(char* buffer, int sector);
-void readFile(char* filename);
+void readFile(char* filename, char* buffer2, int* sectorsRead);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 
 //hello Joao!
@@ -24,6 +24,9 @@ void main()
 
 	char line[100];
 	char buffer[512];
+	//buffer specifically for readFile, max file size
+	char buffer2[13312];
+	int sectorsRead;
 
 	while (*letters != 0x0)
 	{
@@ -42,14 +45,14 @@ void main()
 	//printChar('A');
 
 	//char line[80];
-	printString("Enter a line: ");
+/*	printString("Enter a line: ");
 	readString(line);
 	printString(line);
 
 	//char buffer[512];
 	readSector(buffer, 30);
 	printString(buffer);
-
+*/
 	//call handleInterrupt21 to make our own interrupts!
 	makeInterrupt21();
 
@@ -57,17 +60,23 @@ void main()
 	//interrupt(0x21, 0, 0, 0, 0);
 
 	//call printString() using interrupt 21
-	interrupt(0x21, 0, line, 0, 0);	
+/*	interrupt(0x21, 0, line, 0, 0);	
 	//call readString() using interrupt 21
 	interrupt(0x21, 1, line, 0, 0);
 	//call readSector() using interrupt 21
 	interrupt(0x21, 2, buffer, 30, 0);
 	//print buffer to print out the readsector message from message.txt
 	interrupt(0x21, 0, buffer, 0, 0);
-	//call interrupt 21 with ax = 3 to print the error message
-	interrupt(0x21, 3, 0, 0, 0);
-
-	while(1);
+	//call interrupt 21 with ax = 4 to print the error message
+	interrupt(0x21, 4, 0, 0, 0);
+*/	//call interrupt 21 to readFile
+	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
+	if(sectorsRead > 0)
+		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
+	else
+		/*no sectors read? then print an error*/
+		interrupt(0x21, 0, "messag not found\r\n", 0, 0); 
+	while(1); /*hang up*/
 }
 
 void printString(char* chars)
@@ -174,10 +183,17 @@ void readSector(char* buffer, int sector)
 }
 
 //function to read a file and to load it, sector by sector, to buffer array
-void readFile(char* filename)
+void readFile(char* filename, char* buffer2, int* sectorsRead)
 {
 
-	//work here
+	//will store the directory once it is loaded via readSector
+	char directory[512];
+
+	//load the directory sector into the character array directory[]
+	readSector(directory, 2);
+	
+	//debugging statement
+	//printString(directory);
 }
 
 
@@ -205,7 +221,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		readSector(bx, cx);
 	}
-	else if(ax >= 3)
+	else if(ax == 3)
+	{
+		readFile(bx);
+	}
+	else if(ax >= 4)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
