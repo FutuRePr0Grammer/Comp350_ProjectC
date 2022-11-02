@@ -1,1 +1,4 @@
-//TODO later
+main()
+{
+	while(1);
+}
