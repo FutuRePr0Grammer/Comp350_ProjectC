@@ -215,12 +215,19 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 			printChar(directory[fileentry + 1]);
 				if(filename[2] == directory[fileentry + 2])
 				{
-					printChar(filename[3]);
+					printChar(filename[2]);
+					printChar(directory[fileentry + 2]);
 					if(filename[3] == directory[fileentry + 3])
 					{
+						printChar(filename[3]);
+						printChar(directory[fileentry + 3]);
 						if(filename[4] == directory[fileentry + 4])
 						{
+							printChar(filename[4]);
+							printChar(directory[fileentry + 4]);
 							if(filename[5] == directory[fileentry + 5])
+								printChar(filename[5]);
+								printChar(directory[fileentry + 5]);
 								printString("Found file!");
 								//for loop to load
 								break;
