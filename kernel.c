@@ -192,6 +192,8 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 	int fileentry = 0;
 
 	//load the directory sector into the character array directory[]
+	//use 2 as the sector because that is the sector holding the dir
+	//1 is the map, 2 is the dir
 	readSector(directory, 2);
 	
 	//debugging statement
@@ -205,17 +207,22 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 			continue;*/
 		if(filename[0] == directory[fileentry + 0])
 		{
+			printChar(filename[0]);
+			printChar(directory[fileentry + 0]);
 			if(filename[1] == directory[fileentry + 1])
 			{
+			printChar(filename[1]);
+			printChar(directory[fileentry + 1]);
 				if(filename[2] == directory[fileentry + 2])
 				{
+					printChar(filename[3]);
 					if(filename[3] == directory[fileentry + 3])
 					{
 						if(filename[4] == directory[fileentry + 4])
 						{
 							if(filename[5] == directory[fileentry + 5])
 								printString("Found file!");
-								*sectorsRead = 1;
+								//for loop to load
 								break;
 						}
 						else
