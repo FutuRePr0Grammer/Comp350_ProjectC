@@ -8,6 +8,7 @@ void readString(char*);
 void readSector(char* buffer, int sector);
 void readFile(char* filename, char* buffer2, int* sectorsRead);
 void executeProgram(char* name);
+void terminate();
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 
 //hello Joao!
@@ -83,6 +84,9 @@ void main()
 
 	//call executeProgram
 	interrupt(0x21, 4, "tstpr1", 0, 0);
+	interrupt(0x21, 4, "tstpr2", 0, 0);
+	//terminate program
+	interrupt(0x21, 5, 0, 0, 0);
  
 	while(1); /*hang up*/
 }
@@ -311,6 +315,13 @@ void executeProgram(char * name)
 	launchProgram(0x2000);
 }
 
+//terminates the program
+void terminate()
+{
+	while(1);
+}
+
+
 //makes interrupt 21 based on function in kernel.asm. Stores our code in the interrupt vector table at the base of memory
 //when interrupt 21 happens, goes to the table in memory, executes our code
 void handleInterrupt21(int ax, int bx, int cx, int dx)
@@ -343,7 +354,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		executeProgram(bx);
 	}
-	else if(ax >= 5)
+	else if(ax == 5)
+	{
+		terminate();
+	}
+	else if(ax >= 6)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
