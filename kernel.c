@@ -190,6 +190,8 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 	char directory[512];
 	//iterator for for loop to find the file name in the directory
 	int fileentry = 0;
+	int loadIndex = 6;
+	char s;
 
 	//load the directory sector into the character array directory[]
 	//use 2 as the sector because that is the sector holding the dir
@@ -228,9 +230,27 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 							if(filename[5] == directory[fileentry + 5])
 								printChar(filename[5]);
 								printChar(directory[fileentry + 5]);
-								printString("Found file!");
-								*sectorsRead = *sectorsRead + 1;
-								//for loop to load
+
+								//debugging statements
+								//printString("Found file!");
+/*								*sectorsRead = *sectorsRead + 1;*/
+
+								//for loop to load the file
+								for(loadIndex; loadIndex <= 26; loadIndex++)
+								{
+
+									s = directory[fileentry + loadIndex];
+									//done reading file
+									if(s == 0)
+										break;
+									else
+									{
+										readSector(buffer2, s);
+										buffer2 += 512;
+										*sectorsRead = *sectorsRead + 1;
+									}
+
+								}
 								break;
 						}
 						else
