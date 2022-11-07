@@ -229,6 +229,7 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 								printChar(filename[5]);
 								printChar(directory[fileentry + 5]);
 								printString("Found file!");
+								*sectorsRead = *sectorsRead + 1;
 								//for loop to load
 								break;
 						}
@@ -287,7 +288,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	}
 	else if(ax == 3)
 	{
-		readFile(bx);
+		readFile(bx, cx, dx);
 	}
 	else if(ax >= 4)
 	{
