@@ -9,7 +9,8 @@ void readSector(char* buffer, int sector);
 void readFile(char* filename, char* buffer2, int* sectorsRead);
 void executeProgram(char* name);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
-void terminate(char* shellname);
+//void terminate(char* shellname);
+void terminate();
 
 //hello Joao!
 
@@ -71,13 +72,14 @@ void main()
 	interrupt(0x21, 0, buffer, 0, 0);
 	//call interrupt 21 with ax = 4 to print the error message
 	interrupt(0x21, 4, 0, 0, 0);
-*/	//call interrupt 21 to readFile
-	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
-	if(sectorsRead > 0)
-		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
-	else
-		/*no sectors read? then print an error*/
-		interrupt(0x21, 0, "messag not found\r\n", 0, 0);
+*/
+	//call interrupt 21 to readFile
+//	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
+//	if(sectorsRead > 0)
+//		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
+//	else
+//		/*no sectors read? then print an error*/
+//		interrupt(0x21, 0, "messag not found\r\n", 0, 0);
 
 	//TEST FOR EXECUTEPROGRAM
 	//executeProgram("tstpr1");
@@ -344,7 +346,11 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		executeProgram(bx);
 	}
-	else if(ax >= 5)
+	else if (ax == 5)
+	{
+		terminate();
+	}
+	else if(ax >= 6)
 	{
 		printString("Invalid value for AX. No function available! Please try again.");
 	}
@@ -352,7 +358,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 }
 
 
-void terminate(char* shellname)
+void terminate()
 {
 	char shellname[6];
 	shellname[0] = 's';
@@ -362,7 +368,8 @@ void terminate(char* shellname)
 	shellname[4] = 'l';
 	shellname[5] = '\0';
 
-	executeProgram(shellname, 0x2000);
+//	executeProgram(shellname, 0x2000);
+	interrupt(0x21, 4, shellname, 0x2000, 0);
 
 	while(1);
 
