@@ -9,6 +9,7 @@ void readSector(char* buffer, int sector);
 void readFile(char* filename, char* buffer2, int* sectorsRead);
 void executeProgram(char* name);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
+void terminate(char* shellname);
 
 //hello Joao!
 
@@ -82,8 +83,16 @@ void main()
 	//executeProgram("tstpr1");
 
 	//call executeProgram
-	interrupt(0x21, 4, "tstpr1", 0, 0);
- 
+//	interrupt(0x21, 4, "tstpr1", 0, 0);
+
+	//call tstpr2 for terminate
+//	interrupt(0x21, 4, "tstpr2", 0, 0);
+
+
+	//call shell
+	interrupt(0x21, 4, "shell", 0, 0);
+
+
 	while(1); /*hang up*/
 }
 
@@ -278,15 +287,6 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 		
 	}	
 
-/*	while(fileentry <= 512)
-	{
-		printChar('a');
-		if(filename[0] != directory[fileentry + 0])
-			continue;
-
-		fileentry += 32;
-	}
-*/
 }
 
 
@@ -310,6 +310,7 @@ void executeProgram(char * name)
 
 	launchProgram(0x2000);
 }
+
 
 //makes interrupt 21 based on function in kernel.asm. Stores our code in the interrupt vector table at the base of memory
 //when interrupt 21 happens, goes to the table in memory, executes our code
@@ -351,6 +352,20 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 }
 
 
+void terminate(char* shellname)
+{
+	char shellname[6];
+	shellname[0] = 's';
+	shellname[1] = 'h';
+	shellname[2] = 'e';
+	shellname[3] = 'l';
+	shellname[4] = 'l';
+	shellname[5] = '\0';
 
+	executeProgram(shellname, 0x2000);
+
+	while(1);
+
+}
 
 
