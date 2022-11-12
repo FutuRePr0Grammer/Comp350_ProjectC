@@ -50,7 +50,7 @@ int main()
 		// executes the file
 		else if(executeFile(lines) == 1)
 		{
-			syscall( 3, lines + 5, buffer, 0);
+			syscall( 3, lines + 5, buffer, &filename);
 			syscall( 0, buffer, 0, 0);
 		}
 
