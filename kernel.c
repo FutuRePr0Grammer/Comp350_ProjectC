@@ -9,7 +9,6 @@ void readSector(char* buffer, int sector);
 void readFile(char* filename, char* buffer2, int* sectorsRead);
 void executeProgram(char* name);
 void handleInterrupt21(int ax, int bx, int cx, int dx);
-//void terminate(char* shellname);
 void terminate();
 
 //hello Joao!
@@ -72,14 +71,13 @@ void main()
 	interrupt(0x21, 0, buffer, 0, 0);
 	//call interrupt 21 with ax = 4 to print the error message
 	interrupt(0x21, 4, 0, 0, 0);
-*/
-	//call interrupt 21 to readFile
-//	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
-//	if(sectorsRead > 0)
-//		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
-//	else
-//		/*no sectors read? then print an error*/
-//		interrupt(0x21, 0, "messag not found\r\n", 0, 0);
+*/	//call interrupt 21 to readFile
+	interrupt(0x21, 3, "messag", buffer2, &sectorsRead);
+	if(sectorsRead > 0)
+		interrupt(0x21, 0, buffer2, 0, 0); /*print the file*/
+	else
+		/*no sectors read? then print an error*/
+		interrupt(0x21, 0, "messag not found\r\n", 0, 0);
 
 	//TEST FOR EXECUTEPROGRAM
 	//executeProgram("tstpr1");
@@ -215,15 +213,18 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 	//load the directory sector into the character array directory[]
 	//use 2 as the sector because that is the sector holding the dir
 	//1 is the map, 2 is the dir
+	*sectorsRead = 0;
 	readSector(directory, 2);
-	
+
 	//debugging statement
 	//printString(directory);
 
 	//loop to find the file name
-	for(fileentry; fileentry <= 512; fileentry += 32)
+	for(fileentry; fileentry < 512; fileentry += 32)
 	{
-//		printChar('a');
+		printChar(directory[0]);
+		printChar(filename[0]);
+		printChar('a');
 		/*if(filename[0] != directory[fileentry + 0])
 			continue;*/
 		if(filename[0] == directory[fileentry + 0])
@@ -247,15 +248,15 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 //							printChar(filename[4]);
 //							printChar(directory[fileentry + 4]);
 							if(filename[5] == directory[fileentry + 5])
-//								printChar(filename[5]);
+							{//	printChar(filename[5]);
 //								printChar(directory[fileentry + 5]);
-
+								printChar('!');
 								//debugging statements
 								//printString("Found file!");
 /*								*sectorsRead = *sectorsRead + 1;*/
 
 								//for loop to load the file
-								for(loadIndex; loadIndex <= 26; loadIndex++)
+								for(loadIndex; loadIndex < 32; loadIndex++)
 								{
 
 									s = directory[fileentry + loadIndex];
@@ -271,7 +272,9 @@ void readFile(char* filename, char* buffer2, int* sectorsRead)
 
 								}
 								break;
-						}
+						} else
+							continue;
+					}
 						else
 							continue;
 					}
@@ -299,9 +302,14 @@ void executeProgram(char * name)
 	//buffer to hold the file name
 	char bufferForFile[13312];
 	int index;
-	
+	int sectorRead;
 	//read file into the buffer
-	readFile(name, bufferForFile);
+	printChar('#');
+	readFile(name, bufferForFile, &sectorRead);
+
+	if( sectorRead == 0)
+		return;
+	printChar('%');
 
 	//load the file into memory using putInMemory from kernel.asm
 	//;void putInMemory (int segment, int address, char character)
@@ -310,6 +318,7 @@ void executeProgram(char * name)
 		putInMemory(0x2000, index, bufferForFile[index]);
 	}	
 
+	printChar('*');
 	launchProgram(0x2000);
 }
 
@@ -346,7 +355,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx)
 	{
 		executeProgram(bx);
 	}
-	else if (ax == 5)
+	else if(ax == 5)
 	{
 		terminate();
 	}
@@ -368,11 +377,12 @@ void terminate()
 	shellname[4] = 'l';
 	shellname[5] = '\0';
 
-//	executeProgram(shellname, 0x2000);
+	//executeProgram(shellname, 0x2000);
 	interrupt(0x21, 4, shellname, 0x2000, 0);
 
 	while(1);
 
 }
+
 
 
