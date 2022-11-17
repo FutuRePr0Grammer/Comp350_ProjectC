@@ -4,3 +4,5 @@ This project is not fully finished. For some reason, "type tstpr2" or "exec tstp
 Link to Github:https://github.com/FutuRePr0Grammer/Comp350_ProjectC/tree/main
 To test: Compile the code "./CompileOS.sh" -> open the simulator "java -jar simulator.jar" -> type "type <filename>" or "exec <filename>" 
 	NOTE: messag is the only filename that works.
+	
+	UPDATE: We went to your office hours, and it now works as of 11/17/2022! The project works as expected, all steps are complete. Joao did the majority of the finishing touches, he gets full credit for all of that.
